@@ -11,8 +11,7 @@ export async function DELETE(
 
   const { id } = await params;
 
-  const body = await req.json();
-  const userId = body.userId;
+  const { userId } = await req.json();
 
   const listing = await Listing.findById(id);
 
@@ -20,8 +19,11 @@ export async function DELETE(
     return NextResponse.json({ message: "Listing not found" }, { status: 404 });
   }
 
-  if (listing.creatorId !== userId) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+  if (listing.creator.toString() !== userId) {
+    return NextResponse.json(
+      { message: "Unauthorized" },
+      { status: 403 }
+    );
   }
 
   await Listing.findByIdAndDelete(id);

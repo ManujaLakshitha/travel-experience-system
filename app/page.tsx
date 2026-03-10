@@ -58,13 +58,19 @@ export default function Feed() {
 
   useEffect(() => {
     fetch("/api/listings")
-      .then(res => res.json())
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || "Server Error");
+        }
+        return res.json();
+      })
       .then(data => {
         setListings(data);
         setIsLoading(false);
       })
       .catch(err => {
-        console.error("Failed to fetch listings:", err);
+        console.error("Failed to fetch listings:", err.message);
         setIsLoading(false);
       });
   }, []);
@@ -203,8 +209,8 @@ export default function Feed() {
               <button
                 onClick={() => setViewMode("grid")}
                 className={`p-2 rounded-md transition-colors ${viewMode === "grid"
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-500 hover:bg-gray-100"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500 hover:bg-gray-100"
                   }`}
               >
                 <Grid className="h-4 w-4" />
@@ -212,8 +218,8 @@ export default function Feed() {
               <button
                 onClick={() => setViewMode("list")}
                 className={`p-2 rounded-md transition-colors ${viewMode === "list"
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-500 hover:bg-gray-100"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500 hover:bg-gray-100"
                   }`}
               >
                 <List className="h-4 w-4" />
@@ -274,7 +280,7 @@ export default function Feed() {
                         ${item.price}
                       </div>
                     )}
-                    
+
                   </div>
 
                   {/* Content */}

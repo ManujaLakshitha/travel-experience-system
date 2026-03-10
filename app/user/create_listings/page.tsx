@@ -3,23 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { 
-  Image as ImageIcon, 
-  MapPin, 
-  DollarSign, 
-  FileText, 
-  X, 
-  Upload, 
+import {
+  Image as ImageIcon,
+  MapPin,
+  DollarSign,
+  FileText,
+  X,
+  Upload,
   Sparkles,
   ArrowLeft,
   CheckCircle,
   AlertCircle,
   Loader2
 } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 
 export default function CreateListing() {
   const router = useRouter();
-  
+
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [image, setImage] = useState("");
@@ -32,14 +33,14 @@ export default function CreateListing() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!title.trim()) newErrors.title = "Title is required";
     if (!location.trim()) newErrors.location = "Location is required";
     if (!description.trim()) newErrors.description = "Description is required";
     if (description.length < 20) newErrors.description = "Description must be at least 20 characters";
     if (image && !isValidUrl(image)) newErrors.image = "Please enter a valid URL";
     if (price && isNaN(Number(price))) newErrors.price = "Price must be a number";
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -65,12 +66,20 @@ export default function CreateListing() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setIsSubmitting(true);
 
     try {
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setErrors({ submit: "You must be logged in to create a listing." });
+        setIsSubmitting(false);
+        return;
+      }
+
+      const decoded: any = jwtDecode(token);
+
       const res = await fetch("/api/listings", {
         method: "POST",
         headers: {
@@ -82,19 +91,20 @@ export default function CreateListing() {
           image: image || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop",
           description,
           price: price ? Number(price) : null,
+          creatorId: decoded.userId,
+          creatorName: decoded.name,
         }),
       });
 
       if (res.ok) {
         setShowSuccess(true);
-        setTimeout(() => {
-          router.push("/");
-        }, 2000);
+        setTimeout(() => router.push("/"), 2000);
       } else {
-        throw new Error("Failed to create listing");
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to create listing");
       }
-    } catch (error) {
-      setErrors({ submit: "Failed to create listing. Please try again." });
+    } catch (error: any) {
+      setErrors({ submit: error.message || "Something went wrong. Please try again." });
     } finally {
       setIsSubmitting(false);
     }
@@ -158,9 +168,8 @@ export default function CreateListing() {
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className={`w-full px-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${
-                      errors.title ? "border-red-500" : "border-gray-200"
-                    }`}
+                    className={`w-full px-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${errors.title ? "border-red-500" : "border-gray-200"
+                      }`}
                     placeholder="e.g., Sunset Boat Tour in Bali"
                   />
                   {errors.title && (
@@ -185,9 +194,8 @@ export default function CreateListing() {
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${
-                      errors.location ? "border-red-500" : "border-gray-200"
-                    }`}
+                    className={`w-full pl-10 pr-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${errors.location ? "border-red-500" : "border-gray-200"
+                      }`}
                     placeholder="e.g., Bali, Indonesia"
                   />
                   {errors.location && (
@@ -212,13 +220,12 @@ export default function CreateListing() {
                     type="url"
                     value={image}
                     onChange={handleImageUrlChange}
-                    className={`w-full pl-10 pr-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${
-                      errors.image ? "border-red-500" : "border-gray-200"
-                    }`}
+                    className={`w-full pl-10 pr-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${errors.image ? "border-red-500" : "border-gray-200"
+                      }`}
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
-                
+
                 {/* Image Preview */}
                 {imagePreview && (
                   <div className="mt-3 relative rounded-xl overflow-hidden border-2 border-gray-200">
@@ -240,7 +247,7 @@ export default function CreateListing() {
                     </button>
                   </div>
                 )}
-                
+
                 {errors.image && (
                   <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="h-4 w-4" />
@@ -262,9 +269,8 @@ export default function CreateListing() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={5}
-                    className={`w-full pl-10 pr-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${
-                      errors.description ? "border-red-500" : "border-gray-200"
-                    }`}
+                    className={`w-full pl-10 pr-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${errors.description ? "border-red-500" : "border-gray-200"
+                      }`}
                     placeholder="Describe your experience in detail... What makes it special? What can travelers expect?"
                   />
                 </div>
@@ -297,9 +303,8 @@ export default function CreateListing() {
                     type="text"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${
-                      errors.price ? "border-red-500" : "border-gray-200"
-                    }`}
+                    className={`w-full pl-10 pr-4 py-3 text-gray-700 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white/50 ${errors.price ? "border-red-500" : "border-gray-200"
+                      }`}
                     placeholder="e.g., 45"
                   />
                   {errors.price && (
@@ -328,7 +333,7 @@ export default function CreateListing() {
                 className="w-full relative group overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                
+
                 {isSubmitting ? (
                   <div className="flex items-center justify-center gap-2">
                     <Loader2 className="h-5 w-5 animate-spin" />

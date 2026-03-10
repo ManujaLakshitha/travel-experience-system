@@ -122,7 +122,7 @@ export default function ListingDetail({ params }: { params: Promise<{ id: string
                     <p className="text-gray-600 mb-6">{error || "Listing not found"}</p>
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-gray-700 rounded-xl hover:bg-blue-600 transition-colors"
                     >
                         <ArrowLeft className="h-4 w-4" />
                         Back to Feed
@@ -131,6 +131,9 @@ export default function ListingDetail({ params }: { params: Promise<{ id: string
             </div>
         );
     }
+
+    console.log("Current User ID:", currentUserId);
+    console.log("Listing Creator ID:", listing?.creator?._id);
 
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-indigo-50">
@@ -144,7 +147,7 @@ export default function ListingDetail({ params }: { params: Promise<{ id: string
                 {/* Back Button */}
                 <button
                     onClick={() => router.back()}
-                    className="group mb-6 inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                    className="group mb-6 text-gray-700 inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105"
                 >
                     <ArrowLeft className="h-4 w-4 text-gray-700 group-hover:-translate-x-1 transition-transform" />
                     <span>Back to Feed</span>
@@ -225,13 +228,15 @@ export default function ListingDetail({ params }: { params: Promise<{ id: string
                                 {/* Action Buttons */}
                                 <div className="space-y-3">
 
-                                    <button
-                                        onClick={() => setShowDeleteModal(true)}
-                                        className="flex items-center justify-center gap-2 w-full py-3 bg-red-50 text-red-600 font-medium rounded-xl hover:bg-red-100 transition-colors"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                        Delete Listing
-                                    </button>
+                                    {listing && (String(currentUserId) === String(listing.creator?._id || listing.creator)) && (
+                                        <button
+                                            onClick={() => setShowDeleteModal(true)}
+                                            className="flex items-center justify-center gap-2 w-full py-3 bg-red-50 text-red-600 font-medium rounded-xl hover:bg-red-100 transition-colors"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                            Delete Listing
+                                        </button>
+                                    )}
                                 </div>
 
                             </div>

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import User from "./User";
 
 const ListingSchema = new mongoose.Schema({
   title: {
@@ -20,21 +21,16 @@ const ListingSchema = new mongoose.Schema({
   price: {
     type: Number
   },
-  creatorName: {
-    type: String
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
   },
-  userId: {
-    type: String
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
+  creatorName: { 
+    type: String 
+  }
+}, { 
+  timestamps: true
+});
 
-  creatorId: String,
-  creatorName: String
-  
-},{timestamps:true});
-
-export default mongoose.models.Listing ||
-  mongoose.model("Listing", ListingSchema);
+export default mongoose.models.Listing || mongoose.model("Listing", ListingSchema);
