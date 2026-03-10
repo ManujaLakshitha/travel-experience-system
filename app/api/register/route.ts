@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       password: hashedPassword
     });
 
-    return NextResponse.json({ message: "User registered successfully" }, { status: 201 });
+    return NextResponse.json({ message: "User registered successfully" }, { status: 200 });
 
   } catch (error) {
     console.error(error);
