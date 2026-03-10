@@ -26,5 +26,12 @@ export async function POST(req: Request): Promise<Response> {
     process.env.JWT_SECRET as string
   );
 
-  return Response.json({ token });
+  return Response.json({
+    token,
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email
+    }
+  });
 }

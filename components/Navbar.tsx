@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { 
-  Menu, 
-  X, 
-  Home, 
-  Compass, 
-  PlusCircle, 
-  LogIn, 
-  LogOut, 
+import {
+  Menu,
+  X,
+  Home,
+  Compass,
+  PlusCircle,
+  LogIn,
+  LogOut,
   User,
   ChevronDown,
   Bell,
@@ -24,24 +24,37 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("user");
+
     setIsLoggedIn(!!token);
 
-    // Handle scroll effect
+    if (userData && userData !== "undefined") {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (error) {
+        console.error("Invalid user data in localStorage");
+        setUser(null);
+      }
+    }
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
+
     window.addEventListener("scroll", handleScroll);
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setIsLoggedIn(false);
-    setShowUserMenu(false);
-    setIsMenuOpen(false);
+    setUser(null);
     router.push("/user/login");
   };
 
@@ -54,8 +67,8 @@ export default function Navbar() {
     <>
       <nav className={`
         fixed top-0 left-0 right-0 z-50 transition-all duration-300
-        ${isScrolled 
-          ? "bg-gray-900/95 backdrop-blur-xl shadow-2xl py-3" 
+        ${isScrolled
+          ? "bg-gray-900/95 backdrop-blur-xl shadow-2xl py-3"
           : "bg-gray-900 py-4"
         }
       `}>
@@ -74,46 +87,11 @@ export default function Navbar() {
               {/* Glow Effect */}
               <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-cyan-600 rounded-lg blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
             </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-1">
-              {navLinks.map((link) => {
-                const Icon = link.icon;
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`
-                      relative px-4 py-2 rounded-lg text-sm font-medium transition-all
-                      ${isActive 
-                        ? "text-blue-400 bg-blue-400/10" 
-                        : "text-gray-300 hover:text-white hover:bg-white/10"
-                      }
-                      group overflow-hidden
-                    `}
-                  >
-                    <span className="relative z-10 flex items-center gap-2">
-                      <Icon className="h-4 w-4" />
-                      {link.label}
-                    </span>
-                    {isActive && (
-                      <div className="absolute inset-0 bg-linear-to-r from-blue-600/20 to-cyan-600/20 animate-pulse"></div>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-
+            
             {/* Desktop Right Section */}
             <div className="hidden md:flex items-center space-x-3">
               {isLoggedIn ? (
                 <>
-                  {/* Notification Bell */}
-                  <button className="relative p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
-                    <Bell className="h-5 w-5" />
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                  </button>
 
                   {/* Create Button */}
                   <Link
@@ -132,7 +110,7 @@ export default function Navbar() {
                       className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
                     >
                       <div className="w-8 h-8 rounded-full bg-linear-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white font-semibold">
-                        U
+                        {user?.name?.charAt(0).toUpperCase()}
                       </div>
                       <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${showUserMenu ? "rotate-180" : ""}`} />
                     </button>
@@ -141,17 +119,9 @@ export default function Navbar() {
                     {showUserMenu && (
                       <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden animate-slide-down">
                         <div className="px-4 py-3 border-b border-gray-700">
-                          <p className="text-sm font-medium text-white">John Doe</p>
-                          <p className="text-xs text-gray-400">john@example.com</p>
+                          <p className="text-sm font-medium text-white">{user?.name}</p>
+                          <p className="text-xs text-gray-400">{user?.email}</p>
                         </div>
-                        <Link
-                          href="/user/profile"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
-                          onClick={() => setShowUserMenu(false)}
-                        >
-                          <User className="h-4 w-4" />
-                          Profile
-                        </Link>
                         <button
                           onClick={logout}
                           className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-gray-700 transition-colors"
@@ -216,8 +186,8 @@ export default function Navbar() {
                     onClick={() => setIsMenuOpen(false)}
                     className={`
                       flex items-center gap-3 px-4 py-3 rounded-xl transition-all
-                      ${isActive 
-                        ? "bg-blue-600/20 text-blue-400" 
+                      ${isActive
+                        ? "bg-blue-600/20 text-blue-400"
                         : "text-gray-300 hover:bg-white/10 hover:text-white"
                       }
                     `}
@@ -237,11 +207,11 @@ export default function Navbar() {
               <div className="space-y-2 pt-4 border-t border-gray-800">
                 <div className="flex items-center gap-3 px-4 py-3">
                   <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white font-semibold">
-                    U
+                    {user?.name?.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white">John Doe</p>
-                    <p className="text-xs text-gray-400">john@example.com</p>
+                    <p className="text-sm font-medium text-white">{user?.name}</p>
+                    <p className="text-xs text-gray-400">{user?.email}</p>
                   </div>
                 </div>
 
@@ -252,15 +222,6 @@ export default function Navbar() {
                 >
                   <PlusCircle className="h-5 w-5" />
                   <span className="font-medium">Create Experience</span>
-                </Link>
-
-                <Link
-                  href="/user/profile"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-white/10 rounded-xl transition-colors"
-                >
-                  <User className="h-5 w-5" />
-                  <span className="font-medium">Profile</span>
                 </Link>
 
                 <button

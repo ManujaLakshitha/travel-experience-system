@@ -14,6 +14,11 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [particles, setParticles] = useState<number[]>([]);
+
+  useEffect(() => {
+    setParticles(Array.from({ length: 20 }, (_, i) => i));
+  }, []);
 
   useEffect(() => {
     // Check if user just registered
@@ -41,10 +46,10 @@ export default function Login() {
 
       const data = await res.json();
 
-      if (data.token) {
+      if (data.token && data.user) {
         localStorage.setItem("token", data.token);
-        // Show success animation before redirect
-        setIsLoading(false);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
         router.push("/");
       } else {
         setError(data.message || "Invalid email or password");
@@ -67,7 +72,7 @@ export default function Login() {
 
       {/* Floating Particles */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
+        {particles.map((i) => (
           <div
             key={i}
             className="absolute w-1 h-1 bg-blue-400/20 rounded-full"
@@ -109,7 +114,7 @@ export default function Login() {
         <div className="bg-white/90 backdrop-blur-xl py-8 px-4 shadow-2xl rounded-3xl sm:px-10 border border-white/30 relative overflow-hidden group">
           {/* Decorative Corner */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-500 to-cyan-500 rounded-bl-full opacity-10 group-hover:opacity-20 transition-opacity"></div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6 relative">
             {/* Email Input */}
             <div className="space-y-2">
@@ -182,7 +187,7 @@ export default function Login() {
             >
               {/* Button Shine Effect */}
               <div className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
-              
+
               {isLoading ? (
                 <>
                   <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -212,7 +217,7 @@ export default function Login() {
             </Link>
           </p>
         </div>
-        
+
       </div>
 
       <style jsx>{`
