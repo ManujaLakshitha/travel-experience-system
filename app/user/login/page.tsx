@@ -3,11 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Register() {
+export default function Login(){
 
   const router = useRouter();
 
-  const [name,setName] = useState("");
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
 
@@ -15,17 +14,23 @@ export default function Register() {
 
     e.preventDefault();
 
-    const res = await fetch("/api/register",{
+    const res = await fetch("/api/login",{
       method:"POST",
       headers:{
         "Content-Type":"application/json"
       },
-      body: JSON.stringify({name,email,password})
+      body: JSON.stringify({email,password})
     });
 
-    if(res.ok){
-      router.push("/user/login");
+    const data = await res.json();
+
+    if(data.token){
+
+      localStorage.setItem("token",data.token);
+
+      router.push("/feed");
     }
+
   }
 
   return(
@@ -34,13 +39,7 @@ export default function Register() {
 
       <form onSubmit={handleSubmit} className="space-y-4 w-80">
 
-        <h2 className="text-2xl font-bold">Register</h2>
-
-        <input
-        placeholder="Name"
-        className="border p-2 w-full"
-        onChange={(e)=>setName(e.target.value)}
-        />
+        <h2 className="text-2xl font-bold">Login</h2>
 
         <input
         placeholder="Email"
@@ -55,8 +54,8 @@ export default function Register() {
         onChange={(e)=>setPassword(e.target.value)}
         />
 
-        <button className="bg-blue-500 text-white p-2 w-full">
-          Register
+        <button className="bg-green-500 text-white p-2 w-full">
+          Login
         </button>
 
       </form>
@@ -64,4 +63,5 @@ export default function Register() {
     </div>
 
   )
+
 }
