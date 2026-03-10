@@ -9,7 +9,6 @@ import {
   DollarSign,
   FileText,
   X,
-  Upload,
   Sparkles,
   ArrowLeft,
   CheckCircle,
@@ -330,9 +329,9 @@ export default function CreateListing() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full relative group overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full relative group overflow-hidden bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
 
                 {isSubmitting ? (
                   <div className="flex items-center justify-center gap-2">

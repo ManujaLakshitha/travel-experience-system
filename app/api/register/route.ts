@@ -12,22 +12,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "All fields are required" }, { status: 400 });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ message: "Invalid email format" }, { status: 400 });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json({ message: "User already exists" }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword
-    });
+    const user = await User.create({ name, email, password: hashedPassword });
 
-    return NextResponse.json({ message: "User registered successfully" }, { status: 200 });
+    return NextResponse.json({ message: "User registered successfully", userId: user._id }, { status: 201 });
 
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Registration Error:", error);
+    return NextResponse.json({ message: "Internal Server Error", error: error.message }, { status: 500 });
   }
 }

@@ -5,15 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
     MapPin,
-    DollarSign,
     Calendar,
-    User,
-    Edit,
     Trash2,
     ArrowLeft,
-    Share2,
-    Heart,
-    Star,
     Clock,
     CheckCircle,
     AlertTriangle,
@@ -131,9 +125,6 @@ export default function ListingDetail({ params }: { params: Promise<{ id: string
             </div>
         );
     }
-
-    console.log("Current User ID:", currentUserId);
-    console.log("Listing Creator ID:", listing?.creator?._id);
 
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-indigo-50">

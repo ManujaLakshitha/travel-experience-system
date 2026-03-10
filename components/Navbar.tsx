@@ -13,7 +13,6 @@ import {
   LogOut,
   User,
   ChevronDown,
-  Bell,
   Sparkles
 } from "lucide-react";
 

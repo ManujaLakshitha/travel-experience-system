@@ -2,20 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {
   Search,
   MapPin,
   Calendar,
-  User,
-  DollarSign,
   Grid,
   List,
   ChevronDown,
-  Star,
-  Heart,
   Filter,
   X
 } from "lucide-react";
