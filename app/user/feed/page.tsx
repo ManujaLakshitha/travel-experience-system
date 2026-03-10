@@ -10,6 +10,12 @@ dayjs.extend(relativeTime);
 export default function Feed() {
 
   const [listings, setListings] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+
+  const filteredListings = listings.filter((item: any) =>
+    item.title.toLowerCase().includes(search.toLowerCase()) ||
+    item.location.toLowerCase().includes(search.toLowerCase())
+  )
 
   useEffect(() => {
 
@@ -28,9 +34,15 @@ export default function Feed() {
         Travel Experiences
       </h1>
 
+      <input
+        placeholder="Search experiences..."
+        className="border p-2 mb-6 w-full"
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
       <div className="grid grid-cols-3 gap-6">
 
-        {listings.map((item) => (
+        {filteredListings.map((item) => (
 
           <Link key={item._id} href={`/user/listing/${item._id}`}>
 

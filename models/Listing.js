@@ -30,7 +30,7 @@ const ListingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-});
+},{timestamps:true});
 
 export default mongoose.models.Listing ||
   mongoose.model("Listing", ListingSchema);

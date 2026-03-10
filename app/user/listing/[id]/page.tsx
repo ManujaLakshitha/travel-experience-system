@@ -4,52 +4,69 @@ import { useEffect, useState, use } from "react";
 
 export default function ListingDetail({ params }: { params: Promise<{ id: string }> }) {
 
-  const { id } = use(params);
+    const { id } = use(params);
 
-  const [listing, setListing] = useState<any>(null);
+    const [listing, setListing] = useState<any>(null);
 
-  useEffect(() => {
+    useEffect(() => {
 
-    fetch("/api/listings")
-      .then(res => res.json())
-      .then(data => {
+        fetch("/api/listings")
+            .then(res => res.json())
+            .then(data => {
 
-        const item = data.find((i: any) => i._id === id);
+                const item = data.find((i: any) => i._id === id);
 
-        setListing(item);
+                setListing(item);
 
-      });
+            });
 
-  }, [id]);
+    }, [id]);
 
-  if (!listing) return <p>Loading...</p>;
+    const deleteListing = async () => {
 
-  return (
+        await fetch(`/api/listings/${id}`, {
+            method: "DELETE"
+        })
 
-    <div className="p-10">
+        window.location.href = "/user/feed"
 
-      <img
-        src={listing.image}
-        className="w-full h-80 object-cover"
-      />
+    }
 
-      <h1 className="text-3xl font-bold mt-4">
-        {listing.title}
-      </h1>
+    if (!listing) return <p>Loading...</p>;
 
-      <p className="text-lg">
-        {listing.location}
-      </p>
+    return (
 
-      <p className="mt-4">
-        {listing.description}
-      </p>
+        <div className="p-10">
 
-      <p className="mt-2 font-bold">
-        ${listing.price}
-      </p>
+            <img
+                src={listing.image}
+                className="w-full h-80 object-cover"
+            />
 
-    </div>
+            <h1 className="text-3xl font-bold mt-4">
+                {listing.title}
+            </h1>
 
-  );
+            <p className="text-lg">
+                {listing.location}
+            </p>
+
+            <p className="mt-4">
+                {listing.description}
+            </p>
+
+            <p className="mt-2 font-bold">
+                ${listing.price}
+            </p>
+
+            <button
+                onClick={deleteListing}
+                className="bg-red-500 text-white px-4 py-2 mt-4"
+            >
+                Delete Listing
+            </button>
+
+        </div>
+
+    );
 }
