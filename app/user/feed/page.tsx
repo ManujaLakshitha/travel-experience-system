@@ -27,7 +27,7 @@ export default function Feed(){
 
         {listings.map((item)=>(
 
-          <Link key={item._id} href={`/listing/${item._id}`}>
+          <Link key={item._id} href={`/user/listing/${item._id}`}>
 
             <div className="border p-4 hover:shadow-lg">
 
