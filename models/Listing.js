@@ -29,7 +29,11 @@ const ListingSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+
+  creatorId: String,
+  creatorName: String
+  
 },{timestamps:true});
 
 export default mongoose.models.Listing ||

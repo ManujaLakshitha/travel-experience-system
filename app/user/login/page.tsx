@@ -45,7 +45,7 @@ export default function Login() {
         localStorage.setItem("token", data.token);
         // Show success animation before redirect
         setIsLoading(false);
-        router.push("/user/feed");
+        router.push("/");
       } else {
         setError(data.message || "Invalid email or password");
         setIsLoading(false);
@@ -125,7 +125,7 @@ export default function Login() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white/70 placeholder:text-gray-400 hover:border-gray-300"
+                  className="block w-full pl-10 pr-3 py-4 text-gray-700 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white/70 placeholder:text-gray-400 hover:border-gray-300"
                   placeholder="you@example.com"
                 />
               </div>
@@ -137,12 +137,6 @@ export default function Login() {
                 <label className="block text-sm font-semibold text-gray-700 ml-1">
                   Password
                 </label>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
-                >
-                  Forgot password?
-                </Link>
               </div>
               <div className="relative group/input">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -153,7 +147,7 @@ export default function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white/70 placeholder:text-gray-400 hover:border-gray-300"
+                  className="block w-full pl-10 pr-12 py-4 text-gray-700 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white/70 placeholder:text-gray-400 hover:border-gray-300"
                   placeholder="••••••••"
                 />
                 <button
@@ -167,20 +161,6 @@ export default function Login() {
                     <Eye className="h-5 w-5" />
                   )}
                 </button>
-              </div>
-            </div>
-
-            {/* Remember Me */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
               </div>
             </div>
 

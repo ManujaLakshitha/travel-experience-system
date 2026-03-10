@@ -7,7 +7,11 @@ export async function POST(req: Request): Promise<Response> {
 
   const data = await req.json();
 
-  const listing = await Listing.create(data);
+  const listing = await Listing.create({
+    ...data,
+    creatorId: data.creatorId,
+    creatorName: data.creatorName
+  });
 
   return Response.json(listing);
 }

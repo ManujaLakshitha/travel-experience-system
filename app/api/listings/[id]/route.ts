@@ -6,19 +6,25 @@ export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    await connectDB();
-    
-    const { id } = await params;
 
-    const deletedListing = await Listing.findByIdAndDelete(id);
+  await connectDB();
 
-    if (!deletedListing) {
-      return NextResponse.json({ message: "Listing not found" }, { status: 404 });
-    }
+  const { id } = await params;
 
-    return NextResponse.json({ message: "Listing deleted successfully" });
-  } catch (error) {
-    return NextResponse.json({ message: "Error deleting listing" }, { status: 500 });
+  const body = await req.json();
+  const userId = body.userId;
+
+  const listing = await Listing.findById(id);
+
+  if (!listing) {
+    return NextResponse.json({ message: "Listing not found" }, { status: 404 });
   }
+
+  if (listing.creatorId !== userId) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+  }
+
+  await Listing.findByIdAndDelete(id);
+
+  return NextResponse.json({ message: "Listing deleted successfully" });
 }
