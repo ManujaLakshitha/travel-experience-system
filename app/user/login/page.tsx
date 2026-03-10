@@ -28,7 +28,7 @@ export default function Login(){
 
       localStorage.setItem("token",data.token);
 
-      router.push("/feed");
+      router.push("/user/feed");
     }
 
   }
